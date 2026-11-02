@@ -1,0 +1,9 @@
+{
+  "name": "herdr-lavish",
+  "private": true,
+  "type": "module",
+  "description": "Review lavish-axi sessions in a native herdr-app pane: herdr mod, launcher and agent skill.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

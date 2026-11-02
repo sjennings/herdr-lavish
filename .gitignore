@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+herdr-shot.png
+mods/lavish/gpui-kit.d.ts
+mods/lavish/jsconfig.json
