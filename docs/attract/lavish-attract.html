@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Attract card for herdr.dev: render to 2000x1000 PNG with
+     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars --window-size=2000,1000 --screenshot=preview.png file://<this file> -->
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 2000px; height: 1000px; overflow: hidden; }
+  body {
+    font-family: "Inter", "Geist", -apple-system, "Segoe UI", sans-serif;
+    background: #0a0f1c;
+    color: #e8edf5;
+    position: relative;
+  }
+  /* subtle grid + glow */
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(120,150,220,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,150,220,0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .glow {
+    position: absolute; width: 1100px; height: 700px; left: -150px; top: -200px;
+    background: radial-gradient(ellipse at center, rgba(59,110,255,0.14), transparent 65%);
+  }
+  .glow2 {
+    position: absolute; width: 900px; height: 600px; right: -100px; bottom: -150px;
+    background: radial-gradient(ellipse at center, rgba(180,80,255,0.10), transparent 65%);
+  }
+  .wrap { position: relative; padding: 64px 72px; height: 100%; display: flex; }
+
+  .left { width: 1020px; display: flex; flex-direction: column; }
+
+  .pill-row { display: flex; align-items: center; gap: 14px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(140,165,220,0.28); border-radius: 999px;
+    padding: 7px 16px; font-size: 15px; color: #aebbd4; background: rgba(20,30,55,0.6);
+  }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #4f8cff; }
+  .src { font-size: 15px; color: #6d7c99; }
+
+  .brand { display: flex; align-items: center; gap: 18px; margin-top: 34px; }
+  .appicon {
+    width: 64px; height: 64px; border-radius: 16px;
+    background: linear-gradient(135deg, #3b6eff, #b44bff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 700; color: #fff;
+    box-shadow: 0 8px 28px rgba(80,110,255,0.35);
+  }
+  .modname { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+
+  h1 { font-size: 62px; line-height: 1.08; font-weight: 750; letter-spacing: -0.02em; margin-top: 30px; }
+  h1 .grad {
+    background: linear-gradient(90deg, #4f8cff, #d46bff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .blurb { margin-top: 22px; font-size: 20px; line-height: 1.5; color: #9aa8c2; max-width: 900px; }
+
+  .feats { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px 40px; max-width: 960px; }
+  .feat { display: flex; gap: 14px; align-items: flex-start; }
+  .fnum {
+    flex: none; width: 30px; height: 30px; border-radius: 9px; margin-top: 2px;
+    background: rgba(79,140,255,0.14); border: 1px solid rgba(79,140,255,0.35);
+    color: #7fb0ff; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .feat b { display: block; font-size: 18px; font-weight: 650; color: #e8edf5; }
+  .feat span { display: block; font-size: 15.5px; color: #8494b0; margin-top: 3px; line-height: 1.4; }
+
+  /* right: herdr window mockup */
+  .right { flex: 1; position: relative; }
+  .win {
+    position: absolute; right: 0; top: 90px; width: 780px; height: 620px;
+    background: #0d1322; border: 1px solid rgba(130,155,215,0.22); border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+    overflow: hidden;
+  }
+  .titlebar {
+    height: 40px; background: #0c1016; border-bottom: 1px solid rgba(130,155,215,0.14);
+    display: flex; align-items: center; padding: 0 16px; gap: 8px;
+  }
+  .tl { width: 11px; height: 11px; border-radius: 50%; }
+  .tl.r { background: #ff5f57; } .tl.y { background: #febc2e; } .tl.g { background: #28c840; }
+  .wintabs { margin-left: 14px; display: flex; gap: 6px; font-size: 12.5px; color: #8494b0; }
+  .wintabs .tab { padding: 4px 12px; border-radius: 6px; }
+  .wintabs .tab.on { background: rgba(79,140,255,0.16); color: #cfe0ff; }
+
+  .pane { position: absolute; left: 20px; top: 66px; right: 20px; bottom: 20px; display: flex; flex-direction: column; }
+  .panehead { height: 44px; background: #101724; border-bottom: 1px solid rgba(130,155,215,0.14); display: flex; align-items: center; padding: 0 14px; gap: 10px; border-radius: 8px 8px 0 0; }
+  .panehead .t { font-size: 13px; font-weight: 600; color: #e8edf5; }
+  .panehead .path { font-size: 12px; color: #6d7c99; font-family: "SF Mono", "JetBrains Mono", monospace; }
+  .panehead .agent { margin-left: auto; font-size: 11px; color: #7fb0ff; display: flex; align-items: center; gap: 6px; }
+  .panehead .agent i { width: 7px; height: 7px; border-radius: 50%; background: #4f8cff; }
+  .btns { display: flex; gap: 8px; margin-left: 12px; }
+  .btn { font-size: 12.5px; padding: 5px 12px; border-radius: 7px; border: 1px solid rgba(130,155,215,0.25); color: #aebbd4; }
+  .btn.primary { background: #3b6eff; border-color: #3b6eff; color: #fff; font-weight: 600; }
+  .btn.danger { color: #ff6b6b; }
+
+  .conv { flex: 1; background: #0f1523; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 78%; padding: 8px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45; }
+  .msg.agent { background: #18202f; color: #cdd8ea; align-self: flex-start; }
+  .msg.user { background: #1d2a45; color: #dfe8f8; align-self: flex-end; }
+  .msg.user .ann { display: block; font-size: 12px; font-style: italic; color: #8494b0; margin-top: 4px; }
+  .queue { border: 1px solid rgba(130,155,215,0.18); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #aebbd4; background: #121a2b; align-self: stretch; }
+  .queue b { color: #6d7c99; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+
+  .composer { border-top: 1px solid rgba(130,155,215,0.14); background: #101724; padding: 12px 14px; display: flex; gap: 10px; align-items: center; border-radius: 0 0 8px 8px; }
+  .composer .field { flex: 1; font-size: 13px; color: #6d7c99; }
+  .composer .q { font-size: 12.5px; padding: 6px 14px; border-radius: 7px; border: 1px solid rgba(130,155,215,0.25); color: #aebbd4; }
+
+  .card {
+    position: absolute; right: 26px; bottom: 60px; width: 330px;
+    background: #131b2e; border: 1px solid rgba(140,165,220,0.28); border-radius: 12px;
+    padding: 16px 18px; box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+  }
+  .card .lbl { font-size: 11px; letter-spacing: 0.06em; color: #6d7c99; font-weight: 600; }
+  .card .val { font-size: 15px; color: #e8edf5; margin-top: 6px; font-weight: 600; }
+  .card .sub { font-size: 12.5px; color: #8494b0; margin-top: 4px; line-height: 1.4; }
+  .card .sep { height: 1px; background: rgba(130,155,215,0.16); margin: 12px 0; }
+</style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="pill-row">
+        <span class="pill"><span class="dot"></span>Herdr mod</span>
+        <span class="src">lavish · GitHub</span>
+      </div>
+      <div class="brand">
+        <div class="appicon">L</div>
+        <div class="modname">lavish</div>
+      </div>
+      <h1>Review agent artifacts<br><span class="grad">in a herdr pane</span></h1>
+      <p class="blurb">Lavish reviews a lavish-axi session without a browser: the conversation with the agent, a feedback composer that queues messages, and the session decisions — in a native pane beside your agent's terminal. The artifact itself stays one click away.</p>
+      <div class="feats">
+        <div class="feat"><div class="fnum">1</div><div><b>Live conversation</b><span>Agent replies and your feedback, synced over the same socket the browser uses.</span></div></div>
+        <div class="feat"><div class="fnum">2</div><div><b>Queue feedback</b><span>Type, queue, edit before sending — the agent picks it up on its next poll.</span></div></div>
+        <div class="feat"><div class="fnum">3</div><div><b>Send · Send &amp; End · End</b><span>The same session decisions the browser chrome makes, one keystroke away.</span></div></div>
+        <div class="feat"><div class="fnum">4</div><div><b>Open in browser</b><span>Element annotation, whiteboards and export stay in the browser; the session is the same.</span></div></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="win">
+        <div class="titlebar">
+          <div class="tl r"></div><div class="tl y"></div><div class="tl g"></div>
+          <div class="wintabs"><span class="tab">terminal</span><span class="tab on">lavish</span></div>
+        </div>
+        <div class="pane">
+          <div class="panehead">
+            <span class="t">Lavish</span>
+            <span class="path">~/demo/report.html</span>
+            <span class="agent"><i></i>Agent working</span>
+            <div class="btns"><span class="btn">Open in browser</span><span class="btn danger">End</span><span class="btn primary">Send · 1</span></div>
+          </div>
+          <div class="conv">
+            <div class="msg agent">Draft v2 is up — I tightened the summary section and added the comparison table you asked for.</div>
+            <div class="msg user">Looks good. Make the table sortable?<span class="ann">↳ “Summary: Q3 rollout plan (demo)”</span></div>
+            <div class="msg agent">Done — sortable columns are in. Anything else before I finalize?</div>
+            <div class="queue"><b>QUEUED · 1</b><br>Also bump the chart colors to match the brand palette.</div>
+          </div>
+          <div class="composer">
+            <span class="field">Feedback for the agent… (annotate elements in the browser)</span>
+            <span class="q">Queue</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl">SESSION</div>
+        <div class="val">demo-report.html</div>
+        <div class="sub">Queued feedback is delivered on the agent's next <span style="font-family:'SF Mono',monospace">lavish-axi poll</span>.</div>
+        <div class="sep"></div>
+        <div class="lbl">ARTIFACT</div>
+        <div class="val">Open in browser</div>
+        <div class="sub">Annotation, whiteboards and export stay in the browser — same session.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

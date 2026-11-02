@@ -2,7 +2,7 @@
 
 Review lavish-axi sessions in a herdr-app pane instead of a browser tab.
 
-![Lavish in a herdr pane](preview.png)
+![Lavish in a herdr pane](docs/screenshot.png)
 
 Lavish runs as usual: same CLI, same local server, same feedback for the
 agent. Only the review surface changes. The session opens as a native pane
@@ -19,6 +19,12 @@ for review in your browser. You annotate elements and text, edit diagrams,
 and queue feedback; the agent picks it up with `lavish-axi poll` and updates
 the artifact. This mod moves that review session into a herdr-app pane
 instead of a browser tab.
+
+![Lavish — review agent artifacts in a herdr pane](preview.png)
+
+The pane itself, live:
+
+![Lavish in a herdr pane](docs/screenshot.png)
 
 ## Install
 
