@@ -60,7 +60,8 @@ tests/                    node --test model/launcher/install tests, pane-e2e.sh
 ### Session load and live state (`api.js`, `session.js`)
 
 `props().url` is the session URL; its last path segment is the session
-key. Bootstrap is the page the browser loads: `GET /session/:key` serves
+key, validated once by `keyFromUrl` (6–32 lowercase hex; anything else puts
+the pane in the error state). Bootstrap is the page the browser loads: `GET /session/:key` serves
 the chrome HTML with the server-owned state embedded in
 `<script id="lavish-session" type="application/json">…</script>`. The
 mod parses that (same data the chrome bootstraps from): session key,

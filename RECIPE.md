@@ -117,7 +117,8 @@ session is the same one either way.
   agents, YAML-style for humans; both quote the session URL (jq first,
   then a `sed` fallback).
 - Mod pane props are `{url}` (the session URL); the key is its last path
-  segment. `dump`/`steps` are test-only.
+  segment and must be 6–32 lowercase hex characters (`keyFromUrl`), else
+  the pane shows the error state. `dump`/`steps` are test-only.
 
 ## Done when
 
