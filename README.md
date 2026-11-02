@@ -10,6 +10,10 @@ beside the agent's terminal — the conversation, the feedback queue and the
 session decisions — talking to the same HTTP and WebSocket API the browser
 page uses. The artifact itself stays one click away in the browser.
 
+## What is Lavish?
+
+[Lavish](https://github.com/kunchenguid/lavish-axi) ([lavish-axi](https://www.npmjs.com/package/lavish-axi) on npm) is a CLI that lets an AI agent hand you an HTML artifact — a plan, report, or prototype — for review in your browser. You annotate elements and text, edit diagrams, and queue feedback; the agent picks it up with `lavish-axi poll` and updates the artifact. This mod moves that review session into a herdr-app pane instead of a browser tab.
+
 ## Install
 
 Needs herdr-app, [lavish-axi](https://www.npmjs.com/package/lavish-axi) and `jq`.
