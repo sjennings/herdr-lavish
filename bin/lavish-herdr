@@ -1,0 +1,94 @@
+#!/bin/sh
+# Open lavish-axi sessions in a herdr-app pane instead of a browser tab.
+#
+#   lavish-herdr <file.html> [flags]   pane mode: runs `lavish-axi <file>
+#                                      [flags] --no-open`, opens the session
+#                                      as a herdr pane, then relays the CLI's
+#                                      output and exit code untouched.
+#   lavish-herdr <anything else>       passthrough: exec lavish-axi "$@"
+#                                      (poll, reply, end, export, share,
+#                                      stop, playbook, design, --help, ...).
+#
+# lavish-axi has no browser-command override; its browser open is the npm
+# `open` package, suppressed only by --no-open / LAVISH_AXI_NO_OPEN=1. That
+# flag is the wiring point, playing the role PLANNOTATOR_BROWSER plays there.
+#
+# LAVISH_HERDR_PLACE: right (default), down, or tab.
+set -eu
+
+first_positional=""
+for arg in "$@"; do
+  case "$arg" in
+    -*) ;;
+    *) first_positional=$arg; break ;;
+  esac
+done
+
+pane_mode=false
+case "$first_positional" in
+  *.html|*.htm) [ -f "$first_positional" ] && pane_mode=true ;;
+esac
+
+if [ "$pane_mode" = false ]; then
+  exec lavish-axi "$@"
+fi
+
+# Pane mode: start (or resume) the session without opening a browser.
+out=$(mktemp "${TMPDIR:-/tmp}/lavish-herdr.XXXXXX")
+trap 'rm -f "$out"' EXIT
+set +e
+LAVISH_AXI_NO_OPEN=1 lavish-axi "$@" --no-open >"$out"
+code=$?
+set -e
+
+url=$(jq -r '.session.url // empty' "$out" 2>/dev/null || true)
+if [ -z "$url" ]; then
+  # lavish-axi prints JSON for agents and YAML-style text for humans;
+  # both quote the session URL itself.
+  url=$(sed -n 's/.*"*url"*[[:space:]]*:[[:space:]]*"\([^"]*\/session\/[^"]*\)".*/\1/p' "$out" | head -n 1)
+fi
+
+open_pane() {
+  command -v herdr-app >/dev/null 2>&1 || return 1
+  command -v jq >/dev/null 2>&1 || return 1
+  herdr-app status >/dev/null 2>&1 || return 1
+  props=$(jq -cn --arg url "$url" '{url: $url}')
+  place=${LAVISH_HERDR_PLACE:-right}
+
+  # The pane of the terminal that started the session (the agent's), when it
+  # is one of this machine's terminals in the window.
+  pane=""
+  if [ -n "${HC_TERMINAL_ID:-}" ]; then
+    pane=$(herdr-app ls | jq -r --arg t "$HC_TERMINAL_ID" \
+      'first(.spaces[] | select(.machine == null) | .tabs[].terminals[] | select(.terminal == $t) | .pane) // empty')
+  fi
+
+  if [ -n "$pane" ] && [ "$place" != tab ]; then
+    herdr-app do pane.split --direction "$place" --pane "$pane" --mod lavish --props "$props" >/dev/null 2>&1 &&
+      return 0
+  fi
+
+  space=""
+  if [ -n "$pane" ]; then
+    space=$(herdr-app ls | jq -r --arg p "$pane" \
+      'first(.spaces[] | select(any(.tabs[].terminals[]; .pane == $p)) | .id) // empty')
+  fi
+  if [ -n "$space" ]; then
+    herdr-app do tab.new --space "$space" --name Lavish --mod lavish --props "$props" >/dev/null 2>&1 &&
+      return 0
+  fi
+  herdr-app do tab.new --name Lavish --mod lavish --props "$props" >/dev/null 2>&1
+}
+
+if [ -n "$url" ]; then
+  if ! open_pane; then
+    echo "lavish-herdr: no herdr window; opening the browser instead" >&2
+    case "$(uname)" in
+      Darwin) open "$url" >/dev/null 2>&1 || true ;;
+      *) xdg-open "$url" >/dev/null 2>&1 || true ;;
+    esac
+  fi
+fi
+
+cat "$out"
+exit "$code"
