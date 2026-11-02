@@ -7,7 +7,7 @@ import { View, div } from "gpui-kit";
 import { v_flex, h_flex, TextareaState, Textarea } from "gpui-base";
 import { props, run, theme, home, writeTextFile, readTextFile } from "herdr";
 import { Api } from "./api.js";
-import { applyChatSync, sendBody } from "./session.js";
+import { applyChatSync, keyFromUrl, sendBody } from "./session.js";
 
 const CLOSE_AFTER_MS = 2000;
 const POLL_FALLBACK_MS = 2500;
@@ -35,8 +35,8 @@ export default class Lavish extends View {
     this.ownPane = null;
 
     const url = props()?.url;
-    if (!url) {
-      this.state = { name: "error", message: "No session URL. Open this pane through lavish-herdr." };
+    if (!keyFromUrl(url)) {
+      this.state = { name: "error", message: "No valid session URL. Open this pane through lavish-herdr." };
       return;
     }
     this.api = new Api(url);
@@ -161,7 +161,7 @@ export default class Lavish extends View {
     cx.notify();
     cx.spawn(async (cx) => {
       const body = sendBody(this.queue.map((item) => item.text), { end });
-      const res = await this.api.sendFeedback(body);
+      const res = await this.api.sendFeedback(body).catch(failedRequest);
       await this.dump();
       if (res.status === 409) {
         this.markEnded(res.json?.ended_by);
@@ -195,7 +195,7 @@ export default class Lavish extends View {
     this.state = { name: "sending" };
     cx.notify();
     cx.spawn(async (cx) => {
-      const res = await this.api.end();
+      const res = await this.api.end().catch(failedRequest);
       await this.dump();
       if (res.status === 409) this.markEnded(res.json?.ended_by);
       else if (!res.ok) {
@@ -392,6 +392,10 @@ export default class Lavish extends View {
         .border_b(1).border_color(t.border).text_size(12).text_color(t.muted).child(this.toast)))
       .child(v_flex().flex_1().min_h(0).child(this.body(t, cx)));
   }
+}
+
+function failedRequest(e) {
+  return { status: 0, ok: false, json: { error: String(e?.message ?? e) } };
 }
 
 function tildePath(path) {

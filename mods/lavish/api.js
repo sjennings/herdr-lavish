@@ -4,13 +4,13 @@
 // only refuses client-managed framing headers, so Origin rides along.
 
 import { WebSocket } from "websocket";
-import { sessionFromChromeHtml } from "./session.js";
+import { keyFromUrl, sessionFromChromeHtml } from "./session.js";
 
 export class Api {
   constructor(url) {
     this.url = String(url || "").split("?")[0];
     this.origin = new URL(this.url).origin;
-    this.key = this.url.replace(/\/+$/, "").split("/").pop();
+    this.key = keyFromUrl(this.url);
   }
 
   sessionUrl() {
