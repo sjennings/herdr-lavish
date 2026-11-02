@@ -266,7 +266,8 @@ export default class Lavish extends View {
     return div().id(id).h(28).px(12).flex().items_center().rounded(6).text_size(12.5)
       .border_1().border_color(tone.border).bg(tone.bg).text_color(tone.fg)
       .when(disabled, (el) => el.opacity(0.5))
-      .when(!disabled, (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click((_e, cx) => onClick(cx)));
+      .when(!disabled, (el) => el.cursor_pointer().hover((s) => s.bg(t.hover)).on_click((_e, cx) => onClick(cx)))
+      .child(label);
   }
 
   header(t) {
